@@ -67,6 +67,9 @@ export default async function handler(req, res) {
   }
 }
 
+// Límite para no exceder tokens de Groq (llama-3.1-8b: ~6K tokens/request)
+const MAX_CONTEXT_CHARS = 12000;
+
 function buildSystemPrompt(context) {
   const base = `Eres un asistente de la Pokédex. Responde ÚNICAMENTE basándote en la información proporcionada (contenido de la página y datos de la PokeAPI).
 Sé tolerante con la ortografía y los errores de escritura: interpreta la intención del usuario aunque escriba con faltas, typos o abreviaturas.
@@ -76,11 +79,16 @@ Si la pregunta no puede responderse con el contexto disponible, indícalo amable
     return base;
   }
 
+  const trimmed = context.trim();
+  const truncated = trimmed.length > MAX_CONTEXT_CHARS
+    ? trimmed.slice(0, MAX_CONTEXT_CHARS) + '\n\n[... contexto truncado por límite de la API ...]'
+    : trimmed;
+
   return `${base}
 
 CONTEXTO (datos de la página y PokeAPI):
 ---
-${context.trim()}
+${truncated}
 ---
 Responde SOLO con la información de este contexto. No inventes datos.`;
 }

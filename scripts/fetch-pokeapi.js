@@ -109,19 +109,24 @@ async function main() {
     pokemonById[p.id] = p;
   });
 
-  // 5. Formatear datos para el chatbot (texto para contexto)
+  // 5. Formatear datos para el chatbot (formato compacto para caber en límite de tokens Groq)
+  // Formato: #ID Nombre|Tipos|Altura Peso|HP,Atk,Def,SpA,SpD,Spd|Habilidades
   const chatbotContext = [
-    'POKÉDEX - Datos completos de los primeros 150 Pokémon:',
+    'POKÉDEX - 150 Pokémon. Formato: #ID Nombre|Tipos|Altura Peso|HP,Atk,Def,SpA,SpD,Spd|Habilidades',
     '',
     ...pokemonDetails.map((p) => {
-      const stats = (p.stats || [])
-        .map((s) => `${STAT_NAMES[s.stat.name] || s.stat.name}: ${s.base_stat}`)
-        .join(', ');
+      const statOrder = ['hp', 'attack', 'defense', 'special-attack', 'special-defense', 'speed'];
+      const statsMap = {};
+      (p.stats || []).forEach((s) => { statsMap[s.stat.name] = s.base_stat; });
+      const stats = statOrder.map((name) => statsMap[name] ?? 0).join(',');
       const abilities = (p.abilities || [])
-        .map((a) => capitalize(a.ability.name.replace(/-/g, ' ')))
+        .slice(0, 3)
+        .map((a) => a.ability.name.replace(/-/g, ' '))
         .join(', ');
-      const types = p.types.map((t) => capitalize(t.type.name)).join(', ');
-      return `#${p.id} ${capitalize(p.name)} - Altura: ${p.height / 10} m, Peso: ${p.weight / 10} kg. Tipos: ${types}. Habilidades: ${abilities}. Estadísticas: ${stats}`;
+      const types = p.types.map((t) => capitalize(t.type.name)).join(',');
+      const h = (p.height / 10).toFixed(1);
+      const w = (p.weight / 10).toFixed(1);
+      return `#${p.id} ${capitalize(p.name)}|${types}|${h}m ${w}kg|${stats}|${abilities}`;
     }),
   ].join('\n');
 
