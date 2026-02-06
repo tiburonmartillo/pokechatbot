@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demo - Página con chatbot incrustado</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #415F91; }
+    code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Página de demostración</h1>
+  <p>Este es un ejemplo de página con el chatbot incrustado. El asistente puede responder preguntas sobre el contenido visible aquí y sobre datos de una API REST si la configuras.</p>
+  
+  <h2>Productos destacados</h2>
+  <ul>
+    <li>Producto A - Precio: 99€</li>
+    <li>Producto B - Precio: 149€</li>
+    <li>Producto C - Precio: 199€</li>
+  </ul>
+
+  <h2>Información de contacto</h2>
+  <p>Email: info@ejemplo.com | Teléfono: +34 600 000 000</p>
+
+  <p><strong>Haz clic en el botón del chat (esquina inferior derecha) para probar el asistente.</strong></p>
+
+  <script 
+    src="/embed.js" 
+    data-chatbot-url="http://localhost:5173"
+  ></script>
+</body>
+</html>
